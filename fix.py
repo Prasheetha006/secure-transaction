@@ -1,0 +1,8 @@
+f = open('safe_advanced.py', 'r', encoding='utf-8') 
+content = f.read() 
+f.close() 
+content = content.replace('body = render_template_string(BASE, body=body)', 'return render_template_string(BASE, body=body)') 
+f = open('safe_advanced.py', 'w', encoding='utf-8') 
+f.write(content) 
+f.close() 
+print("Fixed!") 

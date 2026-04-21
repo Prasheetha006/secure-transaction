@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Finance Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        #messages {
+            border: 1px solid #ccc;
+            width: 400px;
+            height: 200px;
+            margin: 0 auto 10px auto;
+            padding: 10px;
+            overflow-y: auto;
+            background: #fafafa;
+            text-align: left;
+        }
+        input, button { padding: 5px; }
+    </style>
+</head>
+<body>
+    <h2>Personal Finance Chatbot</h2>
+    <div id="messages"></div>
+
+    <input type="text" id="userInput" placeholder="Ask me about your spending..." />
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="clearChat()">Clear</button>
+<script>
+async function sendMessage() {
+    const input = document.getElementById("userInput");
+    if (!input.value.trim()) return;
+
+    try {
+        const response = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "message=" + encodeURIComponent(input.value)
+        });
+
+        const messages = document.getElementById("messages");
+
+        if (!response.ok) {
+            messages.innerHTML += `<p><b>Bot:</b> ❌ Error sending message</p>`;
+            return;
+        }
+
+        const data = await response.json();
+        messages.innerHTML += `<p><b>You:</b> ${input.value}</p>`;
+        messages.innerHTML += `<p><b>Bot:</b> ${data.reply}</p>`;
+        messages.scrollTop = messages.scrollHeight;
+        input.value = "";
+    } catch (err) {
+        console.error(err);
+        document.getElementById("messages").innerHTML += `<p><b>Bot:</b> ❌ Could not connect to server</p>`;
+    }
+}
+
+function clearChat() {
+    document.getElementById("messages").innerHTML = "";
+}
+</script>
+</body>
+</html>
